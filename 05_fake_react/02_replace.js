@@ -45,6 +45,10 @@ class Header extends FakeReact.Component {
 }
 
 class Image extends FakeReact.Component {
+    componentWillUnmount() {
+        console.log('Image about to unmount!');
+    }
+
     render() {
         return FakeReact.createElement(
             'img',
