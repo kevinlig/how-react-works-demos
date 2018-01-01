@@ -11,7 +11,6 @@ export default class BaseComponent {
 
     setState(changedState) {
         this.state = Object.assign({}, this.state, changedState);
-        // this._internalInstance.updateChildren(this.render());
         this._internalInstance.update();
     }
 }

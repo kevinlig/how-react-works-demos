@@ -1,13 +1,13 @@
 import { instantiateComponent } from './utils.js';
 
-const mountTree = (element, container) => {
+const _mountTree = (element, container) => {
     const rootComponent = instantiateComponent(element);
     const rootDOM = rootComponent.mount();
     container.appendChild(rootDOM);
 };
 
 const domRenderer = {
-    render: mountTree
+    render: _mountTree
 };
 
 export default domRenderer;

@@ -71,11 +71,9 @@ export default class CompositeComponent {
             this.publicInstance.componentWillMount();
         }
 
-        // for the sake of demo, we won't support children in composite components
-
         // create the DOM or Composite component for the child
         this.childComponent = instantiateComponent(this.childElement);
-        
+
         // mount the child DOM/Composite component
         const host = this.childComponent.mount();
         // retain a reference to this element so we can swap it out layer

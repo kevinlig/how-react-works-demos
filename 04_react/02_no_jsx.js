@@ -80,15 +80,15 @@ class App extends React.Component {
                 null,
                 React.createElement(
                     Header,
-                    null, 
+                    null,
                     null
                 ),
                 React.createElement(
                     Counter,
-                    null, 
+                    null,
                     null
                 )
-            )   
+            )
         );
     }
 }
@@ -101,4 +101,3 @@ ReactDOM.render(
     ),
     document.getElementById('app')
 );
-
