@@ -2,52 +2,43 @@ const container = document.getElementById('app');
 
 const components = {};
 
-// create a component factory function
-const Component = (props = {
+const BaseComponent = {
+    _createElement() {
+        // create a new DOM element from scratch
+        this._el = document.createElement(this.type);
+        this._content = document.createTextNode(this.value);
+        this._el.appendChild(this._content);
+        container.appendChild(this._el);
+    },
+    _updateElement(newValue) {
+        // update the existing element in place
+        if (!this._el) {
+            // element has not been created yet, so we can't update
+            this._createNewInstance();
+            return;
+        }
+        const newContent = document.createTextNode(newValue);
+        this._el.replaceChild(newContent, this._content);
+        this._content = newContent;
+        this.value = newValue;
+    },
+    create() {
+        // we need to return an explicitly-bound version of the function that maps the context to
+        // the object instance for when it gets called in an anonymous form by the operation queue
+        return this._createElement.bind(this);
+    },
+    update(nextValue) {
+        // we need to return an explicitly-bound version of the function that maps the context to
+        // the object instance for when it gets called in an anonymous form by the operation queue
+        return this._updateElement.bind(this, nextValue);
+    },
+    populate(props = {
         type: '',
         value: ''
-    }) => {
-    let type = props.type;
-    let value = props.value;
-    let ref = null;
-    let contentRef = null;
-
-    const _buildElement = () => {
-        ref = document.createElement(type);
-        contentRef = document.createTextNode(value);
-        ref.appendChild(contentRef);
-        container.appendChild(ref);
-    };
-
-    const _updateElement = () => {
-        const newContent = document.createTextNode(value);
-        ref.replaceChild(newContent, contentRef);
-        contentRef = newContent;
-    };
-
-    const _operation = () => {
-        if (ref) {
-            // element exists, update it
-            _updateElement();
-        }
-        else {
-            // element doesn't exist, create it
-            _buildElement();
-        }
-    };
-
-    return {
-        create: () => {
-            _buildElement();
-        },
-        update: (newValue) => {
-            if (newValue === value) {
-                // nothing has changed
-                return null;
-            }
-            value = newValue;
-            return _operation;
-        }
+    }) {
+        const { type, value } = props;
+        this.type = type;
+        this.value = value;
     }
 };
 
@@ -66,23 +57,25 @@ const update = (change = false) => {
         if (components[key]) {
             // existing component, update it
             const item = components[key];
-            const update = item.update(value);
-            if (update) {
-                writeOps.push(update);
+            if (item.value !== value) {
+                // the item's value has changed
+                // for this example, we won't handle element type changes, so everything will only
+                // update in place after its initial creation
+                writeOps.push(item.update(value));
             }
         }
         else {
             // new component, create it
-            const item = Component({
+            const item = Object.create(BaseComponent);
+            item.populate({
                 type: 'li',
                 value: value
             });
-            writeOps.push(item.create);
+            writeOps.push(item.create());
             components[key] = item;
         }
     }
 
-  
     writeOps.forEach((operation) => {
         operation();
     });
