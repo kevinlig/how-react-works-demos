@@ -63,13 +63,14 @@ export default class CompositeComponent {
         this.publicInstance = new element.type(element.props);
         // create a reference back to this component for future updating
         this.publicInstance._internalInstance = this;
-        // call the render function to return a plain JS object representing the child
-        this.childElement = this.publicInstance.render();
 
         if (this.publicInstance.componentWillMount) {
             // component is about to mount, call the lifecycle function
             this.publicInstance.componentWillMount();
         }
+
+        // call the render function to return a plain JS object representing the child
+        this.childElement = this.publicInstance.render();
 
         // create the DOM or Composite component for the child
         this.childComponent = instantiateComponent(this.childElement);
